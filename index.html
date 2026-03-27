@@ -18,8 +18,8 @@
             <h2 class="text-xl font-bold text-slate-800 mb-2">Sales Portal</h2>
             <p class="text-sm text-slate-500 mb-6">Enter access code</p>
             <input type="password" id="access-code" placeholder="Password" class="w-full p-3 border rounded-lg mb-4 text-center outline-none focus:ring-2 focus:ring-blue-500">
-            <button id="login-btn" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700">Login</button>
-            <p id="login-error" class="text-red-500 text-xs mt-3 hidden">❌ Invalid Password</p>
+            <button id="login-btn" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition-all">Login</button>
+            <p id="login-error" class="text-red-500 text-xs mt-3 hidden text-center w-full">❌ Invalid Password. Try Field2026</p>
         </div>
     </div>
 
@@ -43,11 +43,11 @@
                             <option>Global IT Systems</option>
                             <option>Vikas Computers</option>
                         </select>
-                        <input type="text" id="order-items" placeholder="Items (e.g. 5x RAM)" class="p-3 border rounded-lg bg-slate-50 outline-none">
+                        <input type="text" id="order-items" placeholder="Items (e.g. 5x RAM, 2x SSD)" class="p-3 border rounded-lg bg-slate-50 outline-none">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <input type="number" id="order-amt" placeholder="Total Amount (₹)" class="p-3 border rounded-lg bg-slate-50 outline-none">
-                        <button id="save-order" class="bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700">Save Order</button>
+                        <button id="save-order" class="bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-all">Save Order</button>
                     </div>
                 </div>
 
@@ -56,57 +56,145 @@
                         <span class="font-bold text-slate-700">Pending Queue</span>
                         <button id="export-csv" class="bg-emerald-600 text-white text-xs px-4 py-2 rounded font-bold hover:bg-emerald-700">Download CSV</button>
                     </div>
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-100 text-slate-500 uppercase text-[10px]">
-                            <tr><th class="p-4">Time</th><th class="p-4">Dealer</th><th class="p-4">Details</th><th class="p-4">Amount</th><th class="p-4">Status</th></tr>
-                        </thead>
-                        <tbody id="orders-body" class="divide-y divide-slate-100"></tbody>
-                    </table>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-100 text-slate-500 uppercase text-[10px]">
+                                <tr>
+                                    <th class="p-4">Time</th>
+                                    <th class="p-4">Dealer</th>
+                                    <th class="p-4">Details</th>
+                                    <th class="p-4">Amount</th>
+                                    <th class="p-4">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-body" class="divide-y divide-slate-100">
+                                </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 h-fit sticky top-8">
-                <h3 class="font-bold text-slate-700 mb-4">📦 Live Stock</h3>
-                <input type="text" id="stock-search" placeholder="Search..." class="w-full p-3 border rounded-lg mb-4 bg-slate-50 outline-none">
-                <ul id="stock-list" class="space-y-3 text-sm"></ul>
+                <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2"><span>📦</span> Live Stock Search</h3>
+                <input type="text" id="stock-search" placeholder="Search components..." class="w-full p-3 border rounded-lg mb-4 bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500">
+                <ul id="stock-list" class="space-y-3 text-sm">
+                    </ul>
             </div>
         </div>
     </div>
 
     <script>
-        const PASS = "Field2026";
+        // 1. Configuration & Data
+        const PASSWORD_REQD = "Field2026";
         const inventory = [
             { name: "Crucial 8GB DDR4 RAM", stock: 45 },
             { name: "WD 500GB NVMe SSD", stock: 12 },
-            { name: "H61 Motherboard", stock: 0 }
+            { name: "H61 Motherboard", stock: 0 },
+            { name: "Consistent 256GB SSD", stock: 88 },
+            { name: "Fingers RGB Cabinet", stock: 4 }
         ];
 
-        // Auth Logic
-        if(sessionStorage.getItem("auth") === "true") document.getElementById("login-overlay").style.display = "none";
-        document.getElementById("login-btn").onclick = () => {
-            if(document.getElementById("access-code").value === PASS) {
-                sessionStorage.setItem("auth", "true");
-                document.getElementById("login-overlay").style.display = "none";
+        // 2. Authentication Logic
+        const loginOverlay = document.getElementById("login-overlay");
+        const loginBtn = document.getElementById("login-btn");
+        const loginInput = document.getElementById("access-code");
+        const loginError = document.getElementById("login-error");
+
+        // Check if session exists
+        if(sessionStorage.getItem("authenticated") === "true") {
+            loginOverlay.style.display = "none";
+        }
+
+        loginBtn.onclick = () => {
+            if(loginInput.value === PASSWORD_REQD) {
+                sessionStorage.setItem("authenticated", "true");
+                loginOverlay.style.display = "none";
             } else {
-                document.getElementById("login-error").classList.remove("hidden");
+                loginError.classList.remove("hidden");
+                loginInput.value = "";
             }
         };
 
-        // Render functions
+        document.getElementById("logout-btn").onclick = () => {
+            sessionStorage.clear();
+            location.reload();
+        };
+
+        // 3. Stock Display Logic
         const renderStock = (list) => {
             document.getElementById("stock-list").innerHTML = list.map(i => `
                 <li class="flex justify-between border-b pb-2">
-                    <span>${i.name}</span>
-                    <span class="font-bold ${i.stock <= 5 ? 'text-red-500' : 'text-green-600'}">${i.stock}</span>
-                </li>`).join('');
+                    <span class="text-slate-600">${i.name}</span>
+                    <span class="font-bold ${i.stock <= 5 ? 'text-red-500' : 'text-green-600'}">
+                        ${i.stock === 0 ? 'Out' : i.stock}
+                    </span>
+                </li>
+            `).join('');
         };
         renderStock(inventory);
+
+        document.getElementById("stock-search").oninput = (e) => {
+            const val = e.target.value.toLowerCase();
+            renderStock(inventory.filter(i => i.name.toLowerCase().includes(val)));
+        };
+
+        // 4. Order Management Logic
+        const renderOrders = () => {
+            const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+            document.getElementById("orders-body").innerHTML = orders.map(o => `
+                <tr>
+                    <td class="p-4 text-slate-400 text-xs">${o.time}</td>
+                    <td class="p-4 font-bold text-slate-700">${o.dealer}</td>
+                    <td class="p-4 text-slate-600">${o.details}</td>
+                    <td class="p-4 font-bold text-blue-600">₹${o.amt}</td>
+                    <td class="p-4"><span class="bg-orange-100 text-orange-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Pending</span></td>
+                </tr>
+            `).join('');
+        };
+        renderOrders();
 
         document.getElementById("save-order").onclick = () => {
             const dealer = document.getElementById("dealer-select").value;
             const details = document.getElementById("order-items").value;
             const amt = document.getElementById("order-amt").value;
-            if(!dealer || !details || !amt) return alert("Fill all fields!");
+
+            if(!dealer || !details || !amt) {
+                alert("Please fill in Dealer, Items, and Amount!");
+                return;
+            }
 
             const orders = JSON.parse(localStorage.getItem("orders") || "[]");
-            orders.unshift({ dealer, details, amt, time: new Date
+            orders.unshift({ 
+                dealer, 
+                details, 
+                amt, 
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
+            });
+            localStorage.setItem("orders", JSON.stringify(orders));
+            
+            // Reset form
+            document.getElementById("order-items").value = "";
+            document.getElementById("order-amt").value = "";
+            renderOrders();
+        };
+
+        // 5. CSV Export Logic
+        document.getElementById("export-csv").onclick = () => {
+            const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+            if(orders.length === 0) return alert("No orders to export!");
+
+            let csv = "data:text/csv;charset=utf-8,Time,Dealer,Details,Amount,Status\n";
+            orders.forEach(o => {
+                csv += `${o.time},${o.dealer},"${o.details}",${o.amt},Pending\n`;
+            });
+            const encodedUri = encodeURI(csv);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Daily_Orders.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+    </script>
+</body>
+</html>
