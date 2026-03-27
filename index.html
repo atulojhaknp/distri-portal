@@ -1,0 +1,82 @@
+!DOCTYPE html
+html lang=en
+head
+    meta charset=UTF-8
+    meta name=viewport content=width=device-width, initial-scale=1.0
+    titleDistri-Port Lite v1.0title
+    script src=httpscdn.tailwindcss.comscript
+    style
+         Hide scrollbar for cleaner look 
+        .no-scrollbar-webkit-scrollbar { display none; }
+        #login-overlay { transition opacity 0.4s ease; }
+    style
+head
+body class=bg-slate-50 font-sans min-h-screen
+
+    div id=login-overlay class=fixed inset-0 z-[100] flex items-center justify-center bg-slate-900
+        div class=bg-white p-8 rounded-2xl shadow-2xl w-80 text-center
+            div class=mb-4 text-4xl🔐div
+            h2 class=text-xl font-bold text-slate-800 mb-2Sales Portalh2
+            p class=text-sm text-slate-500 mb-6Enter access codep
+            input type=password id=access-code placeholder=Password class=w-full p-3 border rounded-lg mb-4 text-center outline-none focusring-2 focusring-blue-500
+            button id=login-btn class=w-full bg-blue-600 text-white py-3 rounded-lg font-bold hoverbg-blue-700Loginbutton
+            p id=login-error class=text-red-500 text-xs mt-3 hidden❌ Invalid Passwordp
+        div
+    div
+
+    div class=max-w-6xl mx-auto p-4 mdp-8
+        header class=flex justify-between items-center mb-8
+            div
+                h1 class=text-2xl font-bold text-slate-800Field Sales Portalh1
+                p class=text-sm text-slate-500Kanpur Distribution Hubp
+            div
+            button id=logout-btn class=text-xs bg-slate-200 px-3 py-1 rounded hoverbg-slate-300 text-slate-600Logoutbutton
+        header
+
+        div class=grid grid-cols-1 lggrid-cols-3 gap-8
+            div class=lgcol-span-2 space-y-6
+                div class=bg-white p-6 rounded-xl shadow-sm border border-slate-200
+                    h3 class=font-bold text-slate-700 mb-4 flex items-center gap-2
+                        span📝span New Order Entry
+                    h3
+                    div class=grid grid-cols-1 mdgrid-cols-2 gap-4 mb-4
+                        select id=dealer-select class=p-3 border rounded-lg bg-slate-50 outline-none
+                            option value=Select Dealer...option
+                            optionTech World Solutionsoption
+                            optionGlobal IT Systemsoption
+                            optionVikas Computersoption
+                        select
+                        input type=text id=order-items placeholder=Items (e.g. 5x RAM, 2x SSD) class=p-3 border rounded-lg bg-slate-50 outline-none
+                    div
+                    div class=grid grid-cols-2 gap-4 mb-6
+                        input type=number id=order-amt placeholder=Total Amount (₹) class=p-3 border rounded-lg bg-slate-50 outline-none
+                        button id=save-order class=bg-blue-600 text-white rounded-lg font-bold hoverbg-blue-700 transition-allSave Orderbutton
+                    div
+                div
+
+                div class=bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden
+                    div class=p-4 bg-slate-50 border-b flex justify-between items-center
+                        span class=font-bold text-slate-700Pending Queuespan
+                        button id=export-csv class=bg-emerald-600 text-white text-xs px-4 py-2 rounded font-bold hoverbg-emerald-700Download CSVbutton
+                    div
+                    div class=overflow-x-auto
+                        table class=w-full text-left text-sm id=orders-table
+                            thead
+                                tr class=bg-slate-100 text-slate-500 uppercase text-[10px] tracking-wider
+                                    th class=p-4Timeth
+                                    th class=p-4Dealerth
+                                    th class=p-4Detailsth
+                                    th class=p-4Amountth
+                                    th class=p-4Statusth
+                                tr
+                            thead
+                            tbody id=orders-body class=divide-y divide-slate-100
+                                tbody
+                        table
+                    div
+                div
+            div
+
+            div class=bg-white p-6 rounded-xl shadow-sm border border-slate-200 h-fit sticky top-8
+                h3 class=font-bold text-slate-700 mb-4 flex items-center gap-2
+                    span
