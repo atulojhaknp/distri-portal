@@ -3,256 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distri-Port Pro Lite</title>
+    <title>Distri-Port Admin Pro v3.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .no-scrollbar::-webkit-scrollbar { display: none; }
         #login-overlay { transition: all 0.5s ease; }
-        .modal-active { overflow: hidden; }
+        .bg-glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
     </style>
 </head>
-<body class="bg-slate-50 font-sans min-h-screen">
+<body class="bg-slate-100 font-sans min-h-screen pb-20">
 
-    <div id="login-overlay" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl w-80 text-center">
-            <div class="mb-4 text-4xl">🔐</div>
-            <h2 class="text-xl font-bold text-slate-800 mb-1">Sales Portal</h2>
-            <p class="text-sm text-slate-500 mb-6">Kanpur Distribution Hub</p>
-            <input type="password" id="access-code" placeholder="Enter Password" class="w-full p-3 border rounded-lg mb-4 text-center outline-none focus:ring-2 focus:ring-blue-500 border-slate-300">
-            <button id="login-btn" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 shadow-lg active:scale-95 transition-all">Access Dashboard</button>
-            <p id="login-error" class="text-red-500 text-xs mt-3 hidden">❌ Invalid Code. Try: Field2026</p>
+    <div id="login-overlay" class="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-85 text-center border-t-4 border-blue-600">
+            <div class="mb-4 text-5xl">🏢</div>
+            <h2 class="text-2xl font-black text-slate-800 mb-1">Kanpur Hub</h2>
+            <p class="text-sm text-slate-500 mb-6 font-medium text-center">Distri-Port Admin Access</p>
+            <input type="password" id="access-code" placeholder="Enter Password" class="w-full p-4 border rounded-2xl mb-4 text-center outline-none focus:ring-2 focus:ring-blue-500 border-slate-200 shadow-sm">
+            <button id="login-btn" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 shadow-lg active:scale-95 transition-all">Unlock Dashboard</button>
+            <p id="login-error" class="text-red-500 text-xs mt-4 hidden font-bold">❌ Incorrect Password</p>
         </div>
     </div>
 
-    <div class="max-w-6xl mx-auto p-4 md:p-8">
-        <header class="flex justify-between items-start mb-8">
-            <div>
-                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Distri-Port <span class="text-blue-600">Pro</span></h1>
-                <p class="text-slate-500 font-medium">Field Executive Terminal</p>
+    <div class="max-w-7xl mx-auto p-4 md:p-8">
+        <header class="flex flex-col md:flex-row justify-between items-center mb-8 bg-white p-6 rounded-3xl shadow-md border border-slate-200 gap-4">
+            <div class="text-center md:text-left">
+                <h1 class="text-3xl font-black text-slate-900 tracking-tight italic">DISTRI-PORT <span class="text-blue-600">PRO</span></h1>
+                <p class="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">Unified Sales & Inventory Terminal</p>
             </div>
-            <button id="logout-btn" class="bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 shadow-sm">Logout</button>
+            <div class="flex gap-2 flex-wrap justify-center">
+                <button onclick="toggleModal('dealer-modal')" class="bg-indigo-50 text-indigo-600 px-5 py-2.5 rounded-2xl text-xs font-black hover:bg-indigo-100 transition-colors uppercase">👥 Dealers</button>
+                <button onclick="toggleModal('import-modal')" class="bg-blue-50 text-blue-600 px-5 py-2.5 rounded-2xl text-xs font-black hover:bg-blue-100 transition-colors uppercase">📦 Import Stock</button>
+                <button onclick="logout()" class="bg-slate-100 text-slate-500 px-5 py-2.5 rounded-2xl text-xs font-black uppercase">Logout</button>
+            </div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-2 space-y-6">
                 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 text-lg">
-                        <span class="bg-blue-100 p-2 rounded-lg text-blue-600 text-sm">📝</span> New Order Entry
+                <div class="bg-white p-8 rounded-[2rem] shadow-md border border-slate-200 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl font-black">PUNCH</div>
+                    <h3 class="font-black text-slate-800 mb-6 flex items-center gap-2 text-xl uppercase tracking-tight">
+                        <span class="bg-blue-600 text-white p-2 rounded-xl text-sm">📝</span> New Order Entry
                     </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div class="space-y-1">
-                            <label class="text-xs font-bold text-slate-500 uppercase ml-1">Dealer Name</label>
-                            <select id="dealer-select" class="w-full p-3 border rounded-xl bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500 border-slate-200">
-                                <option value="">Select Dealer...</option>
-                                <option>Tech World Solutions</option>
-                                <option>Global IT Systems</option>
-                                <option>Vikas Computers</option>
-                                <option>Jai Shri Electronics</option>
-                            </select>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest">Select Dealer</label>
+                            <select id="dealer-select" class="w-full p-4 border rounded-2xl bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500 border-slate-200 font-bold text-slate-700"></select>
                         </div>
-                        <div class="space-y-1">
-                            <label class="text-xs font-bold text-slate-500 uppercase ml-1">Items & Quantities</label>
-                            <input type="text" id="order-items" placeholder="e.g. 10x RAM, 5x SSD" class="w-full p-3 border rounded-xl bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500 border-slate-200">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest">Items & Qty</label>
+                            <input type="text" id="order-items" placeholder="e.g. 20x SSD, 5x RAM" class="w-full p-4 border rounded-2xl bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500 border-slate-200 font-bold">
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="space-y-1">
-                            <label class="text-xs font-bold text-slate-500 uppercase ml-1">Total Bill Value</label>
-                            <input type="number" id="order-amt" placeholder="₹ Amount" class="w-full p-3 border rounded-xl bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500 border-slate-200">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest">Bill Amount (₹)</label>
+                            <input type="number" id="order-amt" placeholder="Total Value" class="w-full p-4 border rounded-2xl bg-slate-50 outline-none border-slate-200 font-bold">
                         </div>
-                        <div class="pt-5">
-                            <button id="save-order" class="w-full bg-blue-600 text-white h-[50px] rounded-xl font-bold hover:bg-blue-700 shadow-md active:scale-95 transition-all">Save Order</button>
+                        <div class="pt-6">
+                            <button id="save-order" class="w-full bg-blue-600 text-white h-[58px] rounded-2xl font-black hover:bg-blue-700 shadow-xl active:scale-95 transition-all uppercase tracking-widest text-sm">Punch Order Now</button>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="p-4 bg-slate-50 border-b flex justify-between items-center">
-                        <span class="font-bold text-slate-800">Today's Pending Orders</span>
-                        <button id="export-csv" class="bg-emerald-600 text-white text-xs px-4 py-2 rounded-lg font-bold hover:bg-emerald-700 flex items-center gap-2">
-                            📥 Download CSV
-                        </button>
+                <div class="bg-white rounded-[2rem] shadow-md border border-slate-200 overflow-hidden">
+                    <div class="p-6 bg-slate-50 border-b flex flex-wrap justify-between items-center gap-4">
+                        <span class="font-black text-slate-800 uppercase tracking-tight">Pending Orders Queue</span>
+                        <div class="flex gap-2">
+                            <button id="export-csv" class="bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-xs font-black hover:bg-emerald-700 shadow-md transition-all uppercase">Download CSV</button>
+                            <button onclick="clearOrders()" class="bg-red-50 text-red-600 px-5 py-2.5 rounded-xl text-xs font-black hover:bg-red-100 uppercase">Reset Queue</button>
+                        </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
-                            <thead class="bg-slate-100 text-slate-500 uppercase text-[10px] font-bold">
-                                <tr>
-                                    <th class="p-4">Time</th>
-                                    <th class="p-4">Dealer</th>
-                                    <th class="p-4">Details</th>
-                                    <th class="p-4">Amount</th>
-                                    <th class="p-4">Status</th>
-                                </tr>
+                            <thead class="bg-slate-100 text-slate-400 uppercase text-[10px] font-black tracking-widest">
+                                <tr><th class="p-5">Time</th><th class="p-5">Dealer Name</th><th class="p-5">Details</th><th class="p-5 text-right">Amount</th></tr>
                             </thead>
-                            <tbody id="orders-body" class="divide-y divide-slate-100">
-                                </tbody>
+                            <tbody id="orders-body" class="divide-y divide-slate-100"></tbody>
                         </table>
-                        <div id="no-orders" class="p-8 text-center text-slate-400 italic hidden">No orders saved yet today.</div>
+                        <div id="no-orders" class="p-12 text-center text-slate-300 font-bold italic hidden">Queue is empty. Punch your first order!</div>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit sticky top-8">
-                <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 text-lg">
-                    <span class="bg-orange-100 p-2 rounded-lg text-orange-600 text-sm">📦</span> Live Stock
+            <div class="bg-white p-7 rounded-[2rem] shadow-md border border-slate-200 h-fit sticky top-8">
+                <h3 class="font-black text-slate-800 mb-5 flex items-center gap-2 text-xl uppercase tracking-tight">
+                    <span class="bg-orange-500 text-white p-2 rounded-xl text-sm">📦</span> Stock Search
                 </h3>
                 <div class="relative mb-6">
-                    <input type="text" id="stock-search" placeholder="Search components..." class="w-full p-3 pl-10 border rounded-xl bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500 border-slate-200">
-                    <span class="absolute left-3 top-3.5 text-slate-400">🔍</span>
+                    <input type="text" id="stock-search" placeholder="Quick find product..." class="w-full p-4 pl-12 border rounded-2xl bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500 border-slate-200 font-bold text-sm shadow-inner">
+                    <span class="absolute left-4 top-4.5 opacity-30 text-xl">🔍</span>
                 </div>
-                <ul id="stock-list" class="space-y-4 text-sm max-h-[400px] overflow-y-auto pr-2 no-scrollbar">
-                    </ul>
+                <ul id="stock-list" class="space-y-3 max-h-[500px] overflow-y-auto pr-2 no-scrollbar"></ul>
             </div>
         </div>
     </div>
 
-    <button id="open-help" class="fixed bottom-6 right-6 bg-slate-900 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center font-bold z-40 hover:scale-110 transition-all text-xl">?</button>
-    <div id="help-modal" class="fixed inset-0 z-[110] bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-3xl overflow-hidden shadow-2xl">
-            <div class="bg-blue-600 p-6 text-white text-center">
-                <h3 class="text-2xl font-bold">Help Guide</h3>
-                <p class="text-blue-100 text-sm">How to use Distri-Port</p>
+    <div id="dealer-modal" class="fixed inset-0 z-[150] bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl border-b-8 border-blue-600">
+            <h3 class="font-black text-2xl mb-1 text-slate-800">Dealer Database</h3>
+            <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-6">Manage Your Network</p>
+            <div class="flex gap-2 mb-6">
+                <input type="text" id="new-dealer-name" placeholder="Enter Shop Name" class="flex-1 p-4 border rounded-2xl bg-slate-50 text-sm outline-none border-slate-200 font-bold">
+                <button onclick="addDealer()" class="bg-blue-600 text-white px-6 py-2 rounded-2xl font-black text-sm shadow-md">+</button>
             </div>
-            <div class="p-6 space-y-6">
-                <div class="flex gap-4">
-                    <div class="bg-blue-50 text-blue-600 w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center font-bold">1</div>
-                    <p class="text-sm text-slate-600">Check **Live Stock** on the right before taking orders. Red means critical stock.</p>
-                </div>
-                <div class="flex gap-4">
-                    <div class="bg-blue-50 text-blue-600 w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center font-bold">2</div>
-                    <p class="text-sm text-slate-600">Orders are saved to **this phone's memory**. They will stay here even if you close the app.</p>
-                </div>
-                <div class="flex gap-4">
-                    <div class="bg-blue-50 text-blue-600 w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center font-bold">3</div>
-                    <p class="text-sm text-slate-600">Click **Download CSV** to send your daily total to the office for billing.</p>
-                </div>
-            </div>
-            <div class="p-4 bg-slate-50 text-center">
-                <button id="close-help" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold active:scale-95 transition-all">Got it!</button>
+            <div id="dealer-manage-list" class="max-h-64 overflow-y-auto space-y-3 mb-8 no-scrollbar"></div>
+            <button onclick="toggleModal('dealer-modal')" class="w-full py-4 bg-slate-100 rounded-2xl font-black text-slate-500 hover:bg-slate-200 transition-all uppercase tracking-widest text-xs">Return to Dashboard</button>
+        </div>
+    </div>
+
+    <div id="import-modal" class="fixed inset-0 z-[150] bg-slate-900/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-xl rounded-[2.5rem] p-8 shadow-2xl border-b-8 border-orange-500">
+            <h3 class="font-black text-2xl mb-1 text-slate-800">Stock Importer</h3>
+            <p class="text-orange-500 text-xs font-bold uppercase tracking-widest mb-4 italic">Format: Item Name, Stock Count</p>
+            <textarea id="import-area" rows="10" placeholder="SSD 500GB, 100&#10;Mouse Logitech, 50" class="w-full p-5 border rounded-3xl bg-slate-50 font-mono text-xs outline-none border-slate-200 mb-6 shadow-inner"></textarea>
+            <div class="flex gap-3">
+                <button onclick="toggleModal('import-modal')" class="flex-1 py-4 bg-slate-100 rounded-2xl font-black text-slate-500 uppercase text-xs">Cancel</button>
+                <button onclick="runImport()" class="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-black shadow-lg uppercase text-xs">Update Inventory</button>
             </div>
         </div>
     </div>
 
     <script>
-        const MASTER_PASS = "Field2026";
-        const inventory = [
-            { name: "Crucial 8GB DDR4 RAM", stock: 42 },
-            { name: "WD 500GB NVMe SSD", stock: 12 },
-            { name: "H61 Motherboard (Consistent)", stock: 3 },
-            { name: "Consistent 256GB SSD", stock: 88 },
-            { name: "Fingers RGB Cabinet", stock: 0 },
-            { name: "G31 Motherboard", stock: 5 },
-            { name: "16GB Pen Drive (Sandisk)", stock: 120 }
-        ];
-
-        // --- AUTHENTICATION ---
+        const AUTH_KEY = "Field2026";
+        
+        // --- AUTH SYSTEM ---
         const loginOverlay = document.getElementById("login-overlay");
-        if(sessionStorage.getItem("is_auth") === "true") loginOverlay.classList.add("hidden");
+        if(sessionStorage.getItem("auth_v3") === "true") loginOverlay.classList.add("hidden");
 
         document.getElementById("login-btn").onclick = () => {
-            const val = document.getElementById("access-code").value;
-            if(val === MASTER_PASS) {
-                sessionStorage.setItem("is_auth", "true");
+            if(document.getElementById("access-code").value === AUTH_KEY) {
+                sessionStorage.setItem("auth_v3", "true");
                 loginOverlay.classList.add("hidden");
             } else {
                 document.getElementById("login-error").classList.remove("hidden");
+                setTimeout(() => document.getElementById("login-error").classList.add("hidden"), 2000);
             }
         };
+        const logout = () => { sessionStorage.clear(); location.reload(); };
 
-        document.getElementById("logout-btn").onclick = () => {
-            sessionStorage.clear();
-            location.reload();
-        };
+        // --- DATA UTILS ---
+        const getDealers = () => JSON.parse(localStorage.getItem("v3_dealers") || '["Default Dealer"]');
+        const getStock = () => JSON.parse(localStorage.getItem("v3_stock") || '[]');
+        const getOrders = () => JSON.parse(localStorage.getItem("v3_orders") || '[]');
+
+        // --- DEALER LOGIC ---
+        function renderDealers() {
+            const dealers = getDealers();
+            const select = document.getElementById("dealer-select");
+            select.innerHTML = '<option value="">Choose Shop...</option>' + 
+                dealers.map(d => `<option value="${d}">${d}</option>`).join('');
+            
+            document.getElementById("dealer-manage-list").innerHTML = dealers.map((d, index) => `
+                <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-sm">
+                    <span class="text-sm font-bold text-slate-700">${d}</span>
+                    <button onclick="deleteDealer(${index})" class="text-red-500 font-black text-[10px] uppercase hover:bg-red-50 px-3 py-1 rounded-lg">Remove</button>
+                </div>`).join('');
+        }
+
+        function addDealer() {
+            const name = document.getElementById("new-dealer-name").value.trim();
+            if(!name) return;
+            const dealers = getDealers();
+            dealers.push(name);
+            localStorage.setItem("v3_dealers", JSON.stringify(dealers));
+            document.getElementById("new-dealer-name").value = "";
+            renderDealers();
+        }
+
+        function deleteDealer(index) {
+            if(confirm("Permanently delete this dealer?")) {
+                const dealers = getDealers();
+                dealers.splice(index, 1);
+                localStorage.setItem("v3_dealers", JSON.stringify(dealers));
+                renderDealers();
+            }
+        }
 
         // --- STOCK LOGIC ---
-        const renderStock = (list) => {
-            const listEl = document.getElementById("stock-list");
-            listEl.innerHTML = list.map(item => `
-                <li class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-100">
-                    <span class="font-medium text-slate-700">${item.name}</span>
-                    <span class="px-3 py-1 rounded-lg text-xs font-bold shadow-sm ${item.stock === 0 ? 'bg-red-100 text-red-600' : item.stock <= 5 ? 'bg-amber-100 text-amber-600' : 'bg-green-100 text-green-600'}">
-                        ${item.stock === 0 ? 'OUT' : item.stock + ' PCS'}
-                    </span>
-                </li>
-            `).join('');
-        };
-        renderStock(inventory);
+        function renderStock() {
+            const query = document.getElementById("stock-search").value.toLowerCase();
+            const list = document.getElementById("stock-list");
+            const items = getStock().filter(i => i.name.toLowerCase().includes(query));
+            
+            list.innerHTML = items.map((i, index) => `
+                <li class="flex justify-between items-center p-4 bg-white border border-slate-100 rounded-2xl shadow-sm group hover:border-blue-200 transition-all">
+                    <div>
+                        <p class="text-[9px] text-slate-400 font-black uppercase tracking-tighter">SKU Item</p>
+                        <p class="text-sm font-black text-slate-700">${i.name}</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="font-black ${i.qty <= 5 ? 'text-red-500' : 'text-emerald-500'} text-lg">${i.qty}</span>
+                        <button onclick="deleteStock(${index})" class="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 font-black text-xl px-1">×</button>
+                    </div>
+                </li>`).join('');
+        }
 
-        document.getElementById("stock-search").oninput = (e) => {
-            const query = e.target.value.toLowerCase();
-            renderStock(inventory.filter(i => i.name.toLowerCase().includes(query)));
-        };
+        function runImport() {
+            const lines = document.getElementById("import-area").value.split('\n');
+            const newStock = lines.filter(l => l.includes(',')).map(l => {
+                const [name, qty] = l.split(',');
+                return { name: name.trim(), qty: parseInt(qty.trim()) || 0 };
+            });
+            if(newStock.length === 0) return alert("Invalid format! Use: Product Name, Qty");
+            localStorage.setItem("v3_stock", JSON.stringify(newStock));
+            toggleModal('import-modal');
+            renderStock();
+        }
 
-        // --- ORDER MANAGEMENT ---
-        const getOrders = () => JSON.parse(localStorage.getItem("pro_orders") || "[]");
-        
-        const renderOrders = () => {
-            const orders = getOrders();
-            const body = document.getElementById("orders-body");
-            const empty = document.getElementById("no-orders");
+        function deleteStock(index) {
+            const stock = getStock();
+            stock.splice(index, 1);
+            localStorage.setItem("v3_stock", JSON.stringify(stock));
+            renderStock();
+        }
 
-            if(orders.length === 0) {
-                body.innerHTML = "";
-                empty.classList.remove("hidden");
-                return;
-            }
-            empty.classList.add("hidden");
-            body.innerHTML = orders.map(o => `
-                <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="p-4 text-slate-400 text-xs">${o.time}</td>
-                    <td class="p-4 font-bold text-slate-700">${o.dealer}</td>
-                    <td class="p-4 text-slate-600">${o.details}</td>
-                    <td class="p-4 font-bold text-blue-600">₹${Number(o.amt).toLocaleString()}</td>
-                    <td class="p-4"><span class="bg-orange-100 text-orange-600 px-2 py-0.5 rounded text-[10px] font-bold tracking-wider">PENDING</span></td>
-                </tr>
-            `).join('');
-        };
-        renderOrders();
-
+        // --- ORDER LOGIC ---
         document.getElementById("save-order").onclick = () => {
             const dealer = document.getElementById("dealer-select").value;
             const items = document.getElementById("order-items").value;
             const amt = document.getElementById("order-amt").value;
-
-            if(!dealer || !items || !amt) return alert("Please fill all details!");
+            if(!dealer || !items || !amt) return alert("Fill all fields before punching!");
 
             const orders = getOrders();
-            orders.unshift({
-                dealer,
-                details: items,
-                amt,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            orders.unshift({ 
+                dealer, items, amt, 
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: true}) 
             });
-            
-            localStorage.setItem("pro_orders", JSON.stringify(orders));
+            localStorage.setItem("v3_orders", JSON.stringify(orders));
             document.getElementById("order-items").value = "";
             document.getElementById("order-amt").value = "";
             renderOrders();
         };
 
-        // --- EXPORT ---
+        function renderOrders() {
+            const orders = getOrders();
+            const empty = document.getElementById("no-orders");
+            const body = document.getElementById("orders-body");
+            
+            if(orders.length === 0) { empty.classList.remove("hidden"); body.innerHTML = ""; return; }
+            empty.classList.add("hidden");
+            
+            body.innerHTML = orders.map(o => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-5 text-[10px] text-slate-400 font-black">${o.time}</td>
+                    <td class="p-5 font-black text-slate-800">${o.dealer}</td>
+                    <td class="p-5 text-slate-600 font-medium">${o.items}</td>
+                    <td class="p-5 font-black text-right text-blue-600 text-lg">₹${Number(o.amt).toLocaleString()}</td>
+                </tr>`).join('');
+        }
+
+        function clearOrders() {
+            if(confirm("Confirm: Clear entire queue for the day?")) {
+                localStorage.removeItem("v3_orders");
+                renderOrders();
+            }
+        }
+
+        // --- MODAL & EXPORT ---
+        function toggleModal(id) { document.getElementById(id).classList.toggle("hidden"); }
+        document.getElementById("stock-search").oninput = renderStock;
+        
         document.getElementById("export-csv").onclick = () => {
             const orders = getOrders();
-            if(orders.length === 0) return alert("Queue is empty!");
-
-            let csv = "Time,Dealer,Items,Amount,Status\n";
-            orders.forEach(o => csv += `${o.time},${o.dealer},"${o.details}",${o.amt},Pending\n`);
-            
+            if(orders.length === 0) return alert("No orders found!");
+            let csv = "Time,Dealer,Items,Amount\n";
+            orders.forEach(o => csv += `${o.time},${o.dealer},"${o.items}",${o.amt}\n`);
             const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('href', url);
-            a.setAttribute('download', `Orders_${new Date().toLocaleDateString()}.csv`);
-            a.click();
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `Kanpur_Orders_${new Date().toLocaleDateString()}.csv`;
+            link.click();
         };
 
-        // --- HELP MODAL ---
-        const help = document.getElementById("help-modal");
-        document.getElementById("open-help").onclick = () => help.classList.remove("hidden");
-        document.getElementById("close-help").onclick = () => help.classList.add("hidden");
-        window.onclick = (e) => { if(e.target === help) help.classList.add("hidden"); };
-
+        window.onload = () => { renderDealers(); renderStock(); renderOrders(); };
     </script>
 </body>
 </html>
